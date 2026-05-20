@@ -1,0 +1,6 @@
+{
+  "name": "Creador e Impresor de Tarjetas",
+  "description": "Diseña tarjetas didácticas o flashcards a partir de capturas de pantalla o texto, optimizadas para impresión frente y dorso con guías de corte y alineación exacta.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

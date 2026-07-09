@@ -81,8 +81,18 @@ const DEFAULT_CONFIG: PrintConfig = {
   paperSize: 'a4',
   showCutMarks: true,
   showBorder: true,
+  showCardNumbers: true,
   style: DEFAULT_STYLE
 };
+
+const normalizePrintConfig = (savedConfig: Partial<PrintConfig> | null | undefined): PrintConfig => ({
+  ...DEFAULT_CONFIG,
+  ...savedConfig,
+  style: {
+    ...DEFAULT_STYLE,
+    ...(savedConfig?.style || {}),
+  },
+});
 
 export default function App() {
   // Application state
@@ -103,7 +113,9 @@ export default function App() {
   const [config, setConfig] = useState<PrintConfig>(() => {
     const saved = localStorage.getItem('print_config');
     if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
+      try {
+        return normalizePrintConfig(JSON.parse(saved));
+      } catch (e) {}
     }
     return DEFAULT_CONFIG;
   });
@@ -492,9 +504,12 @@ export default function App() {
 
   // Flatten normal cards with copy counter multiplier
   const flattenedPrintCards: Card[] = [];
-  cards.forEach(card => {
+  cards.forEach((card, index) => {
     for (let c = 0; c < card.copies; c++) {
-      flattenedPrintCards.push(card);
+      flattenedPrintCards.push({
+        ...card,
+        studyNumber: index + 1,
+      });
     }
   });
 
@@ -790,6 +805,28 @@ export default function App() {
             </div>
           </div>
 
+          {/* Section: Study helpers */}
+          <div className="space-y-3 bg-slate-800/40 p-4 rounded-xl border border-slate-800">
+            <div className="flex items-center gap-2 pb-1 border-b border-slate-800/70">
+              <Settings className="w-3.5 h-3.5 text-blue-400" />
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">
+                Herramientas de estudio
+              </label>
+            </div>
+            <p className="text-[10px] text-slate-400 leading-normal">
+              Estas opciones hacen que las tarjetas sean más útiles para repasar y memorizar.
+            </p>
+            <label className="flex items-center justify-between gap-3 text-xs text-slate-300 cursor-pointer">
+              <span>Numerar tarjetas</span>
+              <input
+                type="checkbox"
+                checked={config.showCardNumbers ?? true}
+                onChange={(e) => setConfig({ ...config, showCardNumbers: e.target.checked })}
+                className="h-4 w-4 rounded border-slate-600 bg-slate-900 text-blue-500 focus:ring-blue-500"
+              />
+            </label>
+          </div>
+
           {/* Section: Typography & Styling Options */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 pb-1 border-b border-slate-800">
@@ -968,6 +1005,7 @@ export default function App() {
                 className="w-4 h-4 text-blue-600 border-slate-700 bg-slate-800 rounded focus:ring-0 focus:outline-none"
               />
             </div>
+
           </div>
 
           {/* Section: Bulk Action shortcuts */}

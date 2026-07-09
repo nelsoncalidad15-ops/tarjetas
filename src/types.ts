@@ -9,6 +9,7 @@ export interface Card {
   copies: number; // number of copies to print
   category?: string;
   createdAt: number;
+  studyNumber?: number;
 }
 
 export interface CardStyle {
@@ -30,5 +31,6 @@ export interface PrintConfig {
   paperSize: 'a4' | 'letter';
   showCutMarks: boolean;
   showBorder: boolean;
+  showCardNumbers: boolean;
   style: CardStyle;
 }
